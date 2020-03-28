@@ -1,15 +1,27 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import styled from 'styled-components';
 
-
+import { Grid, Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import { Container } from 'react-bootstrap';
 // const Box = styled.div`
 	
 // 	width: 50%;
 // `;
 
+const useStyles = makeStyles({
+  root: {
+
+
+
+  },
+
+});
+
+
+
 export default function Court(props){
 
+  const styles = useStyles();
 	const Zone = (props) => {
 		let number = props.number;
 
@@ -25,9 +37,9 @@ export default function Court(props){
 	const Column = (props) => {
 		let number = props.number;
 		return(
-			<Col xs={1}>
+			<Grid item>
 				<Zone number={number} />
-			</Col>
+			</Grid>
 		);
 	}
 
@@ -35,20 +47,31 @@ export default function Court(props){
 		let number = props.number;
 
 		return(
-			<Row xs={2} style={{'justify-content': 'center'}}>
+			<Grid item container style={{
+		    display: 'flex',
+		    'justify-content': 'space-around',
+			}}>
 				<Column number={3*(number)-2}/>
 				<Column number={3*(number)-1}/>
 				<Column number={3*(number)}/>
-			</Row>
+			</Grid>
 		);
 	}
 
 	return(
-		<div>
-			<Container style={{border: '2px solid black', 'border-bottom-style': 'dashed'}}>
+		<Container style={{display: 'flex', 'justify-content': 'center'}}>
+			<div style={{
+		  	border: '.2em solid black',
+		  	'border-bottom':'dotted',
+		    width: '40vw',
+		    height: '40vh',
+		    display: 'flex',
+		    'flex-direction': 'column',
+		    'justify-content': 'space-around',
+			}}>
 				<CourtRow number={1}/>
 				<CourtRow number={2}/>
-			</Container>
-		</div>
+			</div>
+		</Container>
 	);
 }
