@@ -1,11 +1,24 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Link from 'next/link';
-import Court from '../../core/court_core';
+import { 
+  Checkbox,
+  FormLabel,
+  FormControlLabel,
+  FormGroup,
+  FormControl,
+  Button,
+  InputLabel,
+  Select } from '@material-ui/core';
 
 export default function Landing() {
-  return (
-    <div>
-      <Court/>
-    </div>
-  );
+
+  return(
+    <ul>
+      <li>
+        <Link href="/components/playbook" as="/playbook">
+          <a>Playbook</a>
+        </Link>
+      </li>
+    </ul>
+    );
 }

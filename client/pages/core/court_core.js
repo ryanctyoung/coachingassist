@@ -1,34 +1,18 @@
 import React from 'react';
 
 import { Grid, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
 import { Container } from 'react-bootstrap';
-// const Box = styled.div`
-	
-// 	width: 50%;
-// `;
-
-const useStyles = makeStyles({
-  root: {
-
-
-
-  },
-
-});
-
-
 
 export default function Court(props){
 
-  const styles = useStyles();
-
+	const callBack = props.callBack;
+  //const styles = useStyles();
 
 	const Zone = (props) => {
 		let number = props.number;
 
 		const clickCallback = () => {
-			console.log("Click callback of Zone ${number}");
+			callBack(number);
 		}
 
 		return(
@@ -39,8 +23,6 @@ export default function Court(props){
 			</div>
 		);
 	}
-
-
 
 	const Column = (props) => {
 		let number = props.number;
@@ -57,7 +39,7 @@ export default function Court(props){
 		return(
 			<Grid item container style={{
 		    display: 'flex',
-		    'justify-content': 'space-around',
+		    'justifyContent': 'space-around',
 			}}>
 				<Column number={3*(number)-2}/>
 				<Column number={3*(number)-1}/>
@@ -67,15 +49,15 @@ export default function Court(props){
 	}
 
 	return(
-		<Container style={{display: 'flex', 'justify-content': 'center'}}>
+		<Container style={{display: 'flex', 'justifyContent': 'center'}}>
 			<div style={{
 		  	border: '.2em solid black',
-		  	'border-bottom':'dotted',
+		  	'borderBottom':'dotted',
 		    width: '40vw',
 		    height: '40vh',
 		    display: 'flex',
-		    'flex-direction': 'column',
-		    'justify-content': 'space-around',
+		    'flexDirection': 'column',
+		    'justifyContent': 'space-around',
 			}}>
 				<CourtRow number={1}/>
 				<CourtRow number={2}/>
