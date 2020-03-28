@@ -22,17 +22,25 @@ const useStyles = makeStyles({
 export default function Court(props){
 
   const styles = useStyles();
+
+
 	const Zone = (props) => {
 		let number = props.number;
 
+		const clickCallback = () => {
+			console.log("Click callback of Zone ${number}");
+		}
+
 		return(
-			<div>
+			<div onClick={clickCallback}>
 				<p>
 					{number}
 				</p>
 			</div>
 		);
 	}
+
+
 
 	const Column = (props) => {
 		let number = props.number;
