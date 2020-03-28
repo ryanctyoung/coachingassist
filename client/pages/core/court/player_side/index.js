@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid, Box } from '@material-ui/core';
 import { Container } from 'react-bootstrap';
 
-export default function Court(props){
+export default function Offense(props){
 
 	const callBack = props.callBack;
   //const styles = useStyles();
@@ -40,6 +40,7 @@ export default function Court(props){
 			<Grid item container style={{
 		    display: 'flex',
 		    'justifyContent': 'space-around',
+		    'flexDirection': 'row-reverse',
 			}}>
 				<Column number={3*(number)-2}/>
 				<Column number={3*(number)-1}/>
@@ -52,11 +53,11 @@ export default function Court(props){
 		<Container style={{display: 'flex', 'justifyContent': 'center'}}>
 			<div style={{
 		  	border: '.2em solid black',
-		  	'borderBottom':'dotted',
+		  	'borderTop':'dotted',
 		    width: '40vw',
 		    height: '40vh',
 		    display: 'flex',
-		    'flexDirection': 'column',
+		    'flexDirection': 'column-reverse',
 		    'justifyContent': 'space-around',
 			}}>
 				<CourtRow number={1}/>

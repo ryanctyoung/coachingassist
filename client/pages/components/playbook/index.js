@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import Link from 'next/link';
-import Court from '../../core/court_core';
+import Court from '../../core/court/court_core';
 import { 
   Checkbox,
   FormLabel,
@@ -13,7 +13,10 @@ import {
 
 export default function Playbook() {
 
-  const [zone, setZone] = useState();
+  const [zones, setZone] = useState({
+      attackZone: null,
+      defenseZone: null,
+    });
   const [bools, setBool] = useState({
     pointBl: false,
     touchGroundBl: false,
@@ -22,11 +25,14 @@ export default function Playbook() {
   const [blockers, setBlockers] = useState();
 
     useEffect(() => {
-      console.log("Zone is " + zone);
-    }, [zone]);
+      console.log("AttackZone is " + zones.attackZone + " while the defense zone is " + zones.defenseZone);
+    }, [zones]);
 
-  const court_callBack = (number) => {
-    setZone(number);
+  const courtO_callBack = (num) => {
+    setZone({...zones, attackZone:num});
+  }
+  const courtD_callBack = (num) => {
+    setZone({...zones, defenseZone:num});
   }
 
   const submitCallback = () => {
@@ -37,7 +43,8 @@ export default function Playbook() {
   }
   return (
     <div>
-      <Court callBack={court_callBack}/>
+      <Court mode={'defense'} callBack={courtD_callBack}/>
+      <Court mode={'offense'} callBack={courtO_callBack}/>
       <FormLabel component="legend">Play Details</FormLabel>
       <FormGroup>
         <FormGroup row name="bools"> 
