@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Grid, Box } from '@material-ui/core';
 import { Container } from 'react-bootstrap';
-import Defense from './defense_side';
-import Attack from './player_side';
 
 export default function Court(props){
 
