@@ -9,14 +9,15 @@ import {
   Button,
   InputLabel,
   Select } from '@material-ui/core';
+import PlayBook from '../playbook';
 
 export default function Landing() {
 
   return(
     <ul>
       <li>
-        <Link href="/components/playbook" as="/playbook">
-          <a>Playbook</a>
+        <Link href={{pathname: "/components/playbook", query: { players:[{name:'Ryan Young'}]}}} as="/playbook">
+          <a>PlayBook</a>
         </Link>
       </li>
     </ul>
