@@ -6,8 +6,9 @@ const UserSchema = new Schema(
         lastName: { type: String },
         teams: [{
           type: mongoose.Schema,Types.ObjectID,
-          ref: 'User'
-        }]
+          ref: 'Team'
+        }],
+
     }
 )
 
