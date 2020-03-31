@@ -7,4 +7,4 @@ function createWindow () {
 	       
 	win.loadURL('http://localhost:8080/')
 }      
-app.on('ready', createWindow)
+app.on('ready', createWindow) 
