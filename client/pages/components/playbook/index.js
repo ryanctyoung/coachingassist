@@ -91,7 +91,7 @@ export default function Playbook(props) {
     const result = selected.plays.map((play)=> {
       return(
         <ListItem>
-          {svgs['../../images/svg/angry.svg']} Play: {play.count}
+         { play.data.name }'s Play: {play.count}
         </ListItem>
       );
     });
@@ -123,7 +123,7 @@ export default function Playbook(props) {
     //nullcheck relevant properties here
 
     let playData = {
-      data: {...bools, ...zones, blockers, tempo, ...spikeBls},
+      data: {...bools, ...zones, blockers, tempo, ...spikeBls, id:selected.id, name:selected.name},
       count: 1
     };
 
