@@ -91,7 +91,7 @@ export default function Playbook(props) {
     const result = selected.plays.map((play)=> {
       return(
         <ListItem>
-          Play: {play.count}
+          {svgs['../../images/svg/angry.svg']} Play: {play.count}
         </ListItem>
       );
     });
@@ -137,7 +137,7 @@ export default function Playbook(props) {
             } 
           }
           return i;
-        }
+        } 
       return -1; 
     }
 
