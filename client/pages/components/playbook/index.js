@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Link from 'next/link';
 import { spacing } from '@material-ui/system';
+import { makeStyles } from '@material-ui/core/styles';
 import Court from '../../core/court/court_core';
 import { 
   createMuiTheme,
@@ -13,30 +14,58 @@ import {
   Button,
   InputLabel,
   Box,
-  Select } from '@material-ui/core';
+  Select,
+  Card,
+  colors,
+   } from '@material-ui/core';
 
 import TeamContext from '../context/TeamContext'
 
+const styledBy = (property, mapping) => (props) => mapping[props[property]];
+const useStyles = makeStyles({
+  svg: {
+    width: '1.5em',
+  },
+  playCard: {
+    backgroundColor: '#ffcdd2', //light red
+    '&$checked': {
+      backgroundColor: '#a5d6a7',
+    },
+  },
+  checked:{
 
-// const styles = {
-// checked: {
-//   color: green[500],
-// },
-// size: {
-//   width: 40,
-//   height: 40,
-// },
-// sizeIcon: {
-//   fontSize: 20,
-// },
-// };
+  },
+
+});
+
+
+
+const svg_prefix = './';
+const reqSvgs = require.context ( '../../images/svg', true, /\.svg$/ )
+const svgs = reqSvgs
+  .keys ()
+  .reduce ( ( images, path ) => {
+    images[path] = reqSvgs ( path )
+    return images
+  }, {} )
+  /*
+  angry.svg
+  check-circle.svg
+  map-pin.svg
+  shield.svg
+  stopwatch.svg
+  user.svg
+  */
+
+
 
 const theme = createMuiTheme({
   spacing: 4,
 });
 
-export default function Playbook(props) {
 
+export default function Playbook(props) {
+  const classes = useStyles();
   //defensive states
   const [zones, setZone] = useState({
       attackZone: null,
@@ -60,6 +89,8 @@ export default function Playbook(props) {
     onorOffbool:null,
     inorOutbool:null,
   });
+
+  //useEffect(()=> {console.log("spike changes: " + spikeBls.inorOutbool+ spikeBls.onorOffbool)}, [spikeBls]);
 
   const HittersList = (props) => {
     const chosen = props.chosen;
@@ -89,9 +120,60 @@ export default function Playbook(props) {
       return(<div/>);
     }
     const result = selected.plays.map((play)=> {
+      const {data} = play;
+      console.log(data.onorOffbool)
+      let onOff = '';
+      switch(data.onorOffbool) {
+        case -1:
+          onOff = "Tight and";
+          console.log("fuck memmememed")
+          break;
+        case 0:
+          onOff = "Good and";
+          break;
+        case 1:
+          onOff = "Off and"
+          break;
+        default:
+          console.log('incorrect Value: default statement reached');
+      }
+
+      let inOut = '';
+      switch(data.inorOutbool) {
+        case -1:
+          inOut = "Inside"
+          break;
+        case 0:
+          inOut = "Inline"
+          break;
+        case 1:
+          inOut = " Outside"
+          break;
+        default:
+          console.log('incorrect Value: default statement reached');        
+      }
+
+
       return(
         <ListItem>
-         { play.data.name }'s Play: {play.count}
+          <Card raised 
+            style={{backgroundColor: data.pointBl ? '#a5d6a7': '#ffcdd2' }}
+            className={classes.playCard}>
+            { data.name }'s Play:
+            <Box my={2} style= {{display:'flex'}}>
+              <img className={classes.svg} src={svgs[svg_prefix+'angry.svg']} alt="React Logo" />
+                {data.touchGroundBl} in Zone: {data.defenseZone}
+              <img className={classes.svg} src={svgs[svg_prefix+'check-circle.svg']} alt="React Logo" />
+                {data.pointBl}
+              <img className={classes.svg} src={svgs[svg_prefix+ 'map-pin.svg']} alt="React Logo" />
+                {onOff}{inOut}
+              <img className={classes.svg} src={svgs[svg_prefix+ 'shield.svg']} alt="React Logo" />
+                {data.touchBlockBl} with {data.blockers} blockers
+              <img className={classes.svg} src={svgs[svg_prefix+ 'stopwatch.svg']} alt="React Logo" />
+                {data.tempo} Tempo
+              {play.count}
+            </Box>
+          </Card>
         </ListItem>
       );
     });
@@ -104,7 +186,6 @@ export default function Playbook(props) {
       );
   }
 
-  useEffect(()=>{console.log(hitters)}, [hitters]);
   //COURT CALLBACKS
   const courtO_callBack = (num) => {
     setZone({...zones, attackZone:num});
@@ -222,7 +303,7 @@ export default function Playbook(props) {
                   <Select
                     native
                     value={blockers}
-                    onChange={(e) => {setBlockers(e.target.value)}}
+                    onChange={(e) => {setBlockers(parseInt(e.target.value))}}
                     inputProps={{
                       name: 'blockers',
                       id: 'blockers-native-simple',
@@ -246,12 +327,12 @@ export default function Playbook(props) {
             </Box>
             <FormGroup>
               <FormGroup row name="hitter-bools">
-                <Box my={1} mx={1}>
+                <Box my={1} >
                   <InputLabel htmlFor="age-native-simple">Set's distance from net</InputLabel>
                   <Select
                     native
                     value={spikeBls.onorOffbool}
-                    onChange={(e) => {setSpike({...spikeBls, onorOffbool:e.target.value})}}
+                    onChange={(e) => {setSpike({...spikeBls, [e.target.name]:parseInt(e.target.value)})}}
                     inputProps={{
                       name: 'onorOffbool',
                       id: 'onorOff-native-simple',
@@ -263,15 +344,15 @@ export default function Playbook(props) {
                     <option value={0}>Perfect</option>
                   </Select>
                 </Box>
-                <Box my={1} mx={3}>
+                <Box my={1}>
                   <InputLabel htmlFor="age-native-simple">Set's horizontal distance</InputLabel>
                   <Select
                     native
                     value={spikeBls.inorOutbool}
-                    onChange={(e) => {setSpike({...spikeBls, inorOutbool:e.target.value})}}
+                    onChange={(e) => {setSpike({...spikeBls, [e.target.name]:parseInt(e.target.value)})}}
                     inputProps={{
-                      name: 'onorOffbool',
-                      id: 'onorOff-native-simple',
+                      name: 'inorOutbool',
+                      id: 'inorOut-native-simple',
                     }}
                   >
                     <option aria-label="None" value="" />
