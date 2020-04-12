@@ -19,7 +19,8 @@ import {
   colors,
    } from '@material-ui/core';
 
-import TeamContext from '../context/TeamContext'
+import TeamContext from '../context/TeamContext';
+import database from '../../../db';
 
 const styledBy = (property, mapping) => (props) => mapping[props[property]];
 const useStyles = makeStyles({
@@ -28,14 +29,10 @@ const useStyles = makeStyles({
   },
   playCard: {
     backgroundColor: '#ffcdd2', //light red
-    '&$checked': {
-      backgroundColor: '#a5d6a7',
-    },
   },
-  checked:{
-
+  selected: {
+    color: 'brown',
   },
-
 });
 
 
@@ -63,8 +60,10 @@ const theme = createMuiTheme({
   spacing: 4,
 });
 
+const db = new database();
 
 export default function Playbook(props) {
+  const [ isLoading, setIsLoading ] = useState(false);
   const classes = useStyles();
   //defensive states
   const [zones, setZone] = useState({
@@ -82,7 +81,8 @@ export default function Playbook(props) {
 
   //hitter states
 
-  const [hitters, setHitters] = useState(useContext(TeamContext).players.map(x => {return {...x, plays:[]}}));
+  const [hitters, setHitters] = useState([]);
+  
   // const [playerSelect, setPlayer] = useState(hitters[0]);
   const [tempo, setTempo] = useState();
   const [spikeBls, setSpike] = useState({
@@ -90,16 +90,33 @@ export default function Playbook(props) {
     inorOutbool:null,
   });
 
-  //useEffect(()=> {console.log("spike changes: " + spikeBls.inorOutbool+ spikeBls.onorOffbool)}, [spikeBls]);
+  useEffect(() => {
+
+    async function fetchData(){
+      setIsLoading(true);
+      const results = await db.getPlayers("Davis");
+      setHitters(results.map((x,index) => {
+          console.log("Async playback: " + x.name);
+          return {...x, plays:[], key: index}
+      }));
+      setIsLoading(false);
+
+    }
+
+    fetchData();
+  }, []);
 
   const HittersList = (props) => {
     const chosen = props.chosen;
     const result = hitters.map((hitter)=> {
       return(
         <ListItem 
-          key={hitter.id} 
-          selected={chosen == hitter.id} 
-          onClick={() => {setPlayer(hitter.id)}}
+          key={hitter.key} 
+          classes={{
+            selected: classes.selected,
+          }}
+          selected={chosen == hitter.key} 
+          onClick={() => {setPlayer(hitter.key)}}
           button>
           {hitter.name}
         </ListItem>
@@ -107,14 +124,19 @@ export default function Playbook(props) {
     });
 
     return(
-       <List mx={3}>
-       {result}
-       </List>
+      <div>
+         <List mx={3}>
+         {result}
+         </List>
+         <Button>
+          Add
+         </Button>
+      </div>
       );
   }
 
   const PlaysList = (props) => {
-    let selected = hitters.find(e => e.id == playerSelect);
+    let selected = hitters.find((e) => e.key == playerSelect);
 
     if(!selected){
       return(<div/>);
@@ -126,7 +148,6 @@ export default function Playbook(props) {
       switch(data.onorOffbool) {
         case -1:
           onOff = "Tight and";
-          console.log("fuck memmememed")
           break;
         case 0:
           onOff = "Good and";
@@ -141,10 +162,10 @@ export default function Playbook(props) {
       let inOut = '';
       switch(data.inorOutbool) {
         case -1:
-          inOut = "Inside"
+          inOut = " Inside"
           break;
         case 0:
-          inOut = "Inline"
+          inOut = " Inline"
           break;
         case 1:
           inOut = " Outside"
@@ -194,9 +215,9 @@ export default function Playbook(props) {
     setZone({...zones, defenseZone:num});
   }
 
-  const submitCallback = () => {
+  const submitPlayCallback = () => {
     let hitterSlice = [...hitters];
-    let selected = hitterSlice.find(e => e.id == playerSelect);
+    let selected = hitterSlice.find(e => e.key == playerSelect);
     if(!selected){
       console.log(playerSelect);
       return;
@@ -237,16 +258,26 @@ export default function Playbook(props) {
 
   }
 
+  const submitGameCallback = () => {
 
+  }
 
+  //
+  if(isLoading){
+    return (
+      <div>
+        Loading...
+      </div>
+      );
+  }
 
-
+  //Main return path
   return (
     <div style={{display: 'flex', flexDirection:'column'}}>
       <div style={{display: 'flex'}}>
         <Box mt={3}>
           <FormLabel>Players List</FormLabel>
-          <HittersList chosen={playerSelect.id}/>
+          <HittersList chosen={playerSelect}/>
         </Box>
         <Box mx={4} my={9}>
           <Court mode={'defense'} callBack={courtD_callBack}/>
@@ -385,12 +416,15 @@ export default function Playbook(props) {
             </FormGroup>
           </Box>
 
-          <Button variant="contained" onClick={submitCallback}>
+          <Button variant="contained" onClick={submitPlayCallback}>
             Submit Play
           </Button>
         </Box>
       </div>
       <PlaysList/>
+      <Button variant="contained" onClick={submitGameCallback}>
+        Finish - Submit Game
+      </Button>
     </div>
   );
 }
