@@ -20,6 +20,8 @@ import {
    } from '@material-ui/core';
 
 import TeamContext from '../context/TeamContext';
+import GameList from '../../core/GameList';
+
 import database from '../../../db';
 
 const styledBy = (property, mapping) => (props) => mapping[props[property]];
@@ -63,7 +65,12 @@ const theme = createMuiTheme({
 const db = new database();
 
 export default function Playbook(props) {
+
   const [ isLoading, setIsLoading ] = useState(false);
+
+  const [ isSelecting, setIsSelecting] = useState(false);
+  const [ games, setGames] = useState([]);
+
   const classes = useStyles();
   //defensive states
   const [zones, setZone] = useState({
@@ -94,11 +101,17 @@ export default function Playbook(props) {
 
     async function fetchData(){
       setIsLoading(true);
+      console.log("fetchData");
+      await db.init();
       const results = await db.getPlayers("Davis");
       setHitters(results.map((x,index) => {
           console.log("Async playback: " + x.name);
           return {...x, plays:[], key: index}
       }));
+      var games = await db.getGames();
+      setGames(games);
+
+      setIsSelecting(true);
       setIsLoading(false);
 
     }
@@ -258,8 +271,9 @@ export default function Playbook(props) {
 
   }
 
-  const submitGameCallback = () => {
-
+  const submitGameCallback = (id) => {
+    let selectedGame = games.find(e => e._id == id);
+    setIsSelecting(false);
   }
 
   //
@@ -268,6 +282,10 @@ export default function Playbook(props) {
       <div>
         Loading...
       </div>
+      );
+  } else if(isSelecting){
+    return (
+      <GameList games={games} submit={submitGameCallback}/>
       );
   }
 
