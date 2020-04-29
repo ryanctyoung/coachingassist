@@ -5,11 +5,11 @@ export default class DbManager{
 
 	constructor(){
 		this.players = Datastore({
-			filename: "/db/datastores/player_store",
+			filename: "/db/datastores/player_store.txt",
 			autoload: true,
 		});
 		this.games = Datastore({
-			filename: "/db/datastores/game_store",
+			filename: "/db/datastores/game_store.txt",
 			autoload: true,
 		});
 	}
@@ -44,6 +44,16 @@ export default class DbManager{
 		})
 		return result;
 	}
+
+	async addGame(game, callback) {
+		await insertDB(this.games, game);
+		if(callback != null)
+		{
+			callback();
+		} 
+	}
+
+
 
 	/*
 	Planned functions:

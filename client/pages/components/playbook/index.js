@@ -62,10 +62,10 @@ const theme = createMuiTheme({
   spacing: 4,
 });
 
-const db = new database();
+
 
 export default function Playbook(props) {
-
+  const db = new database();
   const [ isLoading, setIsLoading ] = useState(false);
 
   const [ isSelecting, setIsSelecting] = useState(false);
@@ -97,6 +97,11 @@ export default function Playbook(props) {
     inorOutbool:null,
   });
 
+  async function updateGames(){
+    var games = await db.getGames();
+    setGames(games);
+  }
+
   useEffect(() => {
 
     async function fetchData(){
@@ -108,9 +113,7 @@ export default function Playbook(props) {
           console.log("Async playback: " + x.name);
           return {...x, plays:[], key: index}
       }));
-      var games = await db.getGames();
-      setGames(games);
-
+      updateGames();
       setIsSelecting(true);
       setIsLoading(false);
 
@@ -276,6 +279,10 @@ export default function Playbook(props) {
     setIsSelecting(false);
   }
 
+  async function addGameCallback (obj){
+    await db.addGame(obj, updateGames);
+  }
+
   //
   if(isLoading){
     return (
@@ -285,7 +292,12 @@ export default function Playbook(props) {
       );
   } else if(isSelecting){
     return (
-      <GameList games={games} submit={submitGameCallback}/>
+      <GameList 
+        db={db} 
+        games={games} 
+        submit={submitGameCallback}
+        add={addGameCallback}
+        />
       );
   }
 
